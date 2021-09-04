@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -14,7 +15,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::all();
+        $data = Post::all();
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -35,12 +38,20 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $post = new Post();
-        $post->create($request->all());
+        $data = $request->all();
 
-        return response()->json([
-            'message' => 'success'
+        $validator = Validator::make($data, [
+            'user_id' => ['required'],
+            'title' => ['required', 'min:5'],
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        Post::create($data);
+
+        return response()->json(['message' => 'success'], 201);
     }
 
     /**
@@ -51,7 +62,13 @@ class PostController extends Controller
      */
     public function show(Post $post, $id)
     {
-        return $post::find($id);
+        $data = $post::find($id);
+
+        if (is_null($data)) {
+            return response()->json(['message' => "id {$id} not found"], 404);
+        }
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -74,12 +91,18 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        $data = $post->find($request->id);
+        $id = $request->id;
+        $data = $post->find($id);
+
+        if (is_null($data)) {
+            return response()->json(['message' => "id {$id} not found"], 404);
+        }
+
         $data->update($request->all());
 
         return response()->json([
             'message' => "success"
-        ]);
+        ], 200);
     }
 
     /**
@@ -90,7 +113,13 @@ class PostController extends Controller
      */
     public function destroy(Request $request, Post $post)
     {
-        $data = $post->find($request->id);
+        $id = $request->id;
+        $data = $post->find($id);
+
+        if (is_null($data)) {
+            return response()->json(['message' => "id {$request->id} not found"], 404);
+        }
+
         $data->delete();
 
         return response()->json([
