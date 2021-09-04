@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Post;
 
+use App\Http\Resources\Comment\CommentResource;
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
@@ -16,7 +18,9 @@ class PostResource extends JsonResource
     {
         return [
             'title' => $this->title,
-            'body' => $this->body
+            'body' => $this->body,
+            'comment' => CommentResource::collection($this->comments),
+            'user' => new UserResource($this->user)
         ];
     }
 }
