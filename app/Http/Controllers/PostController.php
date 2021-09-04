@@ -14,7 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        return Post::all();
     }
 
     /**
@@ -35,7 +35,12 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $post = new Post();
+        $post->create($request->all());
+
+        return response()->json([
+            'message' => 'success'
+        ]);
     }
 
     /**
@@ -44,9 +49,9 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show(Post $post, $id)
     {
-        //
+        return $post::find($id);
     }
 
     /**
@@ -69,7 +74,12 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $data = $post->find($request->id);
+        $data->update($request->all());
+
+        return response()->json([
+            'message' => "success"
+        ]);
     }
 
     /**
@@ -78,8 +88,13 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy(Request $request, Post $post)
     {
-        //
+        $data = $post->find($request->id);
+        $data->delete();
+
+        return response()->json([
+            'message' => 'success'
+        ]);
     }
 }
