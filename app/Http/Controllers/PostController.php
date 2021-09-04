@@ -18,7 +18,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        $data = Post::paginate(5);
+        // DB::listen(function ($query) {
+        //     var_dump($query->sql);
+        // });
+
+        $data = Post::with(['user', 'comments'])->paginate(5);
 
         return new PostCollection($data);
     }
