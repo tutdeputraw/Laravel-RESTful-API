@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Post\PostCollection;
+use App\Http\Resources\Post\PostResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +19,8 @@ class PostController extends Controller
     {
         $data = Post::all();
 
-        return response()->json($data, 200);
+        // return response()->json($data, 200);
+        return new PostCollection($data);
     }
 
     /**
@@ -68,7 +71,7 @@ class PostController extends Controller
             return response()->json(['message' => "id {$id} not found"], 404);
         }
 
-        return response()->json($data, 200);
+        return new PostResource($data);
     }
 
     /**
